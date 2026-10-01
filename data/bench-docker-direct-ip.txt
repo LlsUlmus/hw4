@@ -1,0 +1,24 @@
+label      : docker via container IP run1
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 2.99 s
+throughput : 669.1 req/s
+latency ms : avg 29.12 | p50 28.62 | p95 37.08 | p99 41.13 | max 46.52
+instances  :
+   8c2ee8da9277                             2000
+label      : docker via container IP run2
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 3.17 s
+throughput : 630.4 req/s
+latency ms : avg 31.15 | p50 31.05 | p95 39.19 | p99 43.78 | max 51.92
+instances  :
+   8c2ee8da9277                             2000
+label      : docker via container IP run3
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 3.06 s
+throughput : 653.6 req/s
+latency ms : avg 30.00 | p50 30.09 | p95 36.14 | p99 38.40 | max 40.75
+instances  :
+   8c2ee8da9277                             2000

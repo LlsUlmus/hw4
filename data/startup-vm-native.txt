@@ -1,0 +1,5 @@
+native startup: 192 ms
+native startup: 190 ms
+native startup: 191 ms
+native startup: 196 ms
+native startup: 191 ms

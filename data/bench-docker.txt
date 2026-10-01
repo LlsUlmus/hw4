@@ -1,0 +1,24 @@
+label      : docker-compose run1
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 3.73 s
+throughput : 536.1 req/s
+latency ms : avg 36.59 | p50 36.16 | p95 46.82 | p99 50.39 | max 56.71
+instances  :
+   8c2ee8da9277                             2000
+label      : docker-compose run2
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 3.57 s
+throughput : 560.8 req/s
+latency ms : avg 35.32 | p50 34.84 | p95 42.10 | p99 51.08 | max 59.35
+instances  :
+   8c2ee8da9277                             2000
+label      : docker-compose run3
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 3.49 s
+throughput : 572.4 req/s
+latency ms : avg 34.46 | p50 34.04 | p95 41.68 | p99 45.60 | max 57.50
+instances  :
+   8c2ee8da9277                             2000

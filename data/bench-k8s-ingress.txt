@@ -1,0 +1,24 @@
+label      : k8s ingress nolimit run1
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 5.18 s
+throughput : 385.8 req/s
+latency ms : avg 50.97 | p50 49.72 | p95 66.57 | p99 84.17 | max 94.54
+instances  :
+   backend-64fc86979c-wsv8l                 2000
+label      : k8s ingress nolimit run2
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 5.01 s
+throughput : 399.4 req/s
+latency ms : avg 49.62 | p50 49.12 | p95 60.44 | p99 69.20 | max 85.01
+instances  :
+   backend-64fc86979c-wsv8l                 2000
+label      : k8s ingress nolimit run3
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 5.11 s
+throughput : 391.0 req/s
+latency ms : avg 50.42 | p50 50.10 | p95 60.37 | p99 66.66 | max 77.63
+instances  :
+   backend-64fc86979c-wsv8l                 2000

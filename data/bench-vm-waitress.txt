@@ -1,0 +1,24 @@
+label      : vm waitress run1
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 5.14 s
+throughput : 389.0 req/s
+latency ms : avg 50.91 | p50 49.20 | p95 72.21 | p99 88.66 | max 108.40
+instances  :
+   Ulmus                                    2000
+label      : vm waitress run2
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 5.09 s
+throughput : 392.9 req/s
+latency ms : avg 50.25 | p50 49.19 | p95 74.34 | p99 84.49 | max 102.68
+instances  :
+   Ulmus                                    2000
+label      : vm waitress run3
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 5.17 s
+throughput : 387.1 req/s
+latency ms : avg 51.10 | p50 50.20 | p95 72.63 | p99 95.24 | max 110.89
+instances  :
+   Ulmus                                    2000

@@ -27,8 +27,15 @@ spec:
           labelSelector:
             matchLabels:
               app: gateway
+      # 收到删除指令后先等待 5s 再发送 SIGTERM：给 kube-proxy 留出摘除 Endpoint 的时间，
+      # 避免缩容/滚动更新瞬间仍有请求被转发到正在退出的实例（实测未加时缩容出现 502）
+      terminationGracePeriodSeconds: 30
       containers:
         - name: gateway
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "5"]
           image: hw4/gateway:1.0
           imagePullPolicy: IfNotPresent
           ports:

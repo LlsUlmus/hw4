@@ -1,0 +1,24 @@
+label      : k8s nodeport nolimit run1
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 4.86 s
+throughput : 411.4 req/s
+latency ms : avg 47.92 | p50 47.26 | p95 62.27 | p99 73.20 | max 80.81
+instances  :
+   backend-64fc86979c-wsv8l                 2000
+label      : k8s nodeport nolimit run2
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 4.66 s
+throughput : 429.4 req/s
+latency ms : avg 45.54 | p50 45.35 | p95 59.60 | p99 66.94 | max 83.76
+instances  :
+   backend-64fc86979c-wsv8l                 2000
+label      : k8s nodeport nolimit run3
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 4.69 s
+throughput : 426.8 req/s
+latency ms : avg 46.21 | p50 45.91 | p95 56.97 | p99 61.34 | max 67.29
+instances  :
+   backend-64fc86979c-wsv8l                 2000

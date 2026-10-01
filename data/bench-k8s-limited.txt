@@ -1,0 +1,24 @@
+label      : k8s nodeport limits=500m run1
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 10.17 s
+throughput : 196.6 req/s
+latency ms : avg 100.81 | p50 99.99 | p95 153.91 | p99 169.31 | max 182.63
+instances  :
+   backend-856bf85cd7-gm6ks                 2000
+label      : k8s nodeport limits=500m run2
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 10.01 s
+throughput : 199.9 req/s
+latency ms : avg 99.24 | p50 98.31 | p95 153.56 | p99 172.99 | max 193.76
+instances  :
+   backend-856bf85cd7-gm6ks                 2000
+label      : k8s nodeport limits=500m run3
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 9.72 s
+throughput : 205.7 req/s
+latency ms : avg 96.03 | p50 96.66 | p95 127.23 | p99 167.77 | max 174.37
+instances  :
+   backend-856bf85cd7-gm6ks                 2000

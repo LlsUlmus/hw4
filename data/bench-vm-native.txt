@@ -1,0 +1,24 @@
+label      : vm-native run1
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 2.66 s
+throughput : 752.6 req/s
+latency ms : avg 26.07 | p50 26.03 | p95 32.10 | p99 36.30 | max 54.01
+instances  :
+   Ulmus                                    2000
+label      : vm-native run2
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 2.57 s
+throughput : 777.9 req/s
+latency ms : avg 25.15 | p50 24.50 | p95 34.10 | p99 38.56 | max 46.87
+instances  :
+   Ulmus                                    2000
+label      : vm-native run3
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 2.65 s
+throughput : 755.3 req/s
+latency ms : avg 25.99 | p50 25.36 | p95 34.94 | p99 38.87 | max 43.70
+instances  :
+   Ulmus                                    2000

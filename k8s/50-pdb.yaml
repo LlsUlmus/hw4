@@ -5,7 +5,9 @@ metadata:
   name: backend-pdb
   namespace: hw4
 spec:
-  minAvailable: 2
+  # 不用 minAvailable: 2 —— HPA 把副本缩到最小值 2 时，它会让任何 Pod 都无法被驱逐，
+  # 节点排空（drain）被永久阻塞（实测）。maxUnavailable 与副本数无关，始终允许逐个迁移。
+  maxUnavailable: 1
   selector:
     matchLabels:
       app: backend

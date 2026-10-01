@@ -1,0 +1,5 @@
+docker startup: 1019 ms
+docker startup: 930 ms
+docker startup: 919 ms
+docker startup: 977 ms
+docker startup: 895 ms

@@ -1,0 +1,5 @@
+k8s startup: 1467 ms
+k8s startup: 1785 ms
+k8s startup: 1717 ms
+k8s startup: 827 ms
+k8s startup: 1739 ms
