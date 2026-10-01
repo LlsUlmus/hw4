@@ -1,0 +1,5 @@
+nested-k8s startup: 2621 ms
+nested-k8s startup: 1994 ms
+nested-k8s startup: 2178 ms
+nested-k8s startup: 1890 ms
+nested-k8s startup: 2329 ms

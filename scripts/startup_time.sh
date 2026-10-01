@@ -5,6 +5,7 @@
 #   ./startup_time.sh native      # 虚拟机内直接运行 gunicorn 进程
 set -e
 MODE=${1:-docker}
+IMG=${IMG:-hw4/backend:1.1}
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 now() { date +%s%3N; }
 
@@ -26,7 +27,7 @@ case $MODE in
   docker)
     docker rm -f st-test >/dev/null 2>&1 || true
     t0=$(now)
-    docker run -d --name st-test -e STORAGE_MODE=memory -p 5901:5000 hw4/backend:1.0 >/dev/null
+    docker run -d --name st-test -e STORAGE_MODE=memory -p 5901:5000 $IMG >/dev/null
     wait_http http://127.0.0.1:5901/healthz
     t1=$(now)
     docker rm -f st-test >/dev/null
@@ -34,7 +35,7 @@ case $MODE in
   k8s)
     kubectl -n hw4 delete pod st-test --ignore-not-found >/dev/null
     t0=$(now)
-    kubectl -n hw4 run st-test --image=hw4/backend:1.0 --image-pull-policy=IfNotPresent \
+    kubectl -n hw4 run st-test --image=$IMG --image-pull-policy=IfNotPresent \
       --env=STORAGE_MODE=memory --restart=Never >/dev/null
     kubectl -n hw4 wait --for=condition=Ready pod/st-test --timeout=120s >/dev/null
     t1=$(now)

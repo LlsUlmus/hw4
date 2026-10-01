@@ -22,7 +22,7 @@ services:
     build:
       context: ..
       dockerfile: docker/backend.Dockerfile
-    image: hw4/backend:1.0
+    image: hw4/backend:1.1
     environment:
       REDIS_HOST: redis
       REDIS_PORT: "6379"

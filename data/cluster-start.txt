@@ -1,0 +1,1 @@
+kind create cluster (3 nodes): 46.0 s; nested minikube cold start: 80.6 s; VM guest boot (systemd-analyze): 21.488 s
