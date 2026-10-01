@@ -1,0 +1,14 @@
+# 非敏感配置：通过 envFrom 注入 gateway 与 backend，修改后执行 rollout restart 生效
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guestbook-config
+  namespace: hw4
+data:
+  APP_TITLE: "云原生留言板（Kubernetes）"
+  APP_VERSION: "1.0.0"
+  BACKEND_URL: "http://backend:5000"
+  REDIS_HOST: "redis-0.redis"
+  REDIS_PORT: "6379"
+  MAX_MESSAGES: "50"
+  MAX_CONTENT_LEN: "200"

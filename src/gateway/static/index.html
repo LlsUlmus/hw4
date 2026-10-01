@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>云原生留言板</title>
+<style>
+  :root { --bg:#f4f6f9; --card:#fff; --ink:#1f2933; --muted:#6b7785; --accent:#2563eb; --line:#e3e7ee; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:"Microsoft YaHei","PingFang SC",sans-serif; background:var(--bg); color:var(--ink); }
+  header { background:#1e293b; color:#fff; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; }
+  header h1 { font-size:20px; margin:0; }
+  header small { color:#cbd5e1; }
+  main { max-width:960px; margin:20px auto; padding:0 16px; display:grid; grid-template-columns:1fr 320px; gap:16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:16px; }
+  .card h2 { font-size:15px; margin:0 0 12px; }
+  input, textarea { width:100%; padding:8px; border:1px solid var(--line); border-radius:6px; font:inherit; margin-bottom:8px; }
+  textarea { height:72px; resize:vertical; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:6px; padding:8px 16px; cursor:pointer; font:inherit; }
+  ul { list-style:none; padding:0; margin:0; }
+  li.msg { border-bottom:1px solid var(--line); padding:10px 0; }
+  li.msg .meta { color:var(--muted); font-size:12px; margin-top:4px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  td { padding:4px 0; border-bottom:1px dashed var(--line); }
+  td:last-child { text-align:right; font-family:Consolas,monospace; }
+  .mono { font-family:Consolas,monospace; font-size:12px; word-break:break-all; }
+  @media (max-width:760px){ main { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">云原生留言板</h1>
+  <small id="ver"></small>
+</header>
+<main>
+  <section>
+    <div class="card">
+      <h2>发表留言</h2>
+      <input id="author" maxlength="20" placeholder="昵称">
+      <textarea id="content" maxlength="200" placeholder="说点什么……"></textarea>
+      <button id="send">提交</button> <span id="tip" class="mono"></span>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>最新留言</h2>
+      <ul id="list"></ul>
+    </div>
+  </section>
+  <aside>
+    <div class="card">
+      <h2>本次请求链路</h2>
+      <table>
+        <tr><td>网关实例</td><td id="gw">-</td></tr>
+        <tr><td>后端实例</td><td id="be">-</td></tr>
+        <tr><td>后端节点</td><td id="node">-</td></tr>
+      </table>
+      <button id="refresh" style="margin-top:10px">再请求一次</button>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h2>统计</h2>
+      <table id="stats"></table>
+    </div>
+  </aside>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+async function j(url, opt) { const r = await fetch(url, opt); return r.json(); }
+
+async function whoami() {
+  const d = await j('/api/whoami');
+  $('gw').textContent = d.gateway || '-';
+  $('be').textContent = d.backend || d.error || '-';
+  $('node').textContent = d.backend_node || '-';
+}
+async function loadMessages() {
+  const d = await j('/api/messages?limit=20');
+  $('list').innerHTML = '';
+  for (const m of d.items) {
+    const li = document.createElement('li'); li.className = 'msg';
+    const c = document.createElement('div'); c.textContent = m.content;
+    const meta = document.createElement('div'); meta.className = 'meta';
+    meta.textContent = `${m.author} · ${new Date(m.ts * 1000).toLocaleString()} · 写入实例 ${m.written_by}`;
+    li.append(c, meta); $('list').append(li);
+  }
+}
+async function loadStats() {
+  await fetch('/api/visit', { method: 'POST' });
+  const s = await j('/api/stats');
+  const rows = [['总访问量', s.visits], ['留言总数', s.messages_total]];
+  for (const [k, v] of Object.entries(s.hits_by_instance)) rows.push([k, v]);
+  $('stats').innerHTML = rows.map(([k, v]) => `<tr><td class="mono">${k}</td><td>${v}</td></tr>`).join('');
+}
+async function refresh() { await Promise.all([whoami(), loadMessages(), loadStats()]); }
+
+$('send').onclick = async () => {
+  const body = JSON.stringify({ author: $('author').value, content: $('content').value });
+  const r = await fetch('/api/messages', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+  const d = await r.json();
+  $('tip').textContent = r.ok ? `已由 ${d.written_by} 写入` : d.error;
+  if (r.ok) { $('content').value = ''; refresh(); }
+};
+$('refresh').onclick = refresh;
+j('/config.json').then(c => { $('title').textContent = c.title; document.title = c.title; $('ver').textContent = 'v' + c.version; });
+refresh();
+</script>
+</body>
+</html>

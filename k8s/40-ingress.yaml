@@ -1,0 +1,19 @@
+# 需先启用 ingress-nginx 控制器；访问时将 hw4.local 解析到 Ingress 入口地址
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: guestbook
+  namespace: hw4
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: hw4.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway
+                port:
+                  number: 8080

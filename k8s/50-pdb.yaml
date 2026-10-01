@@ -1,0 +1,22 @@
+# 自愿中断（节点排空、集群升级）时保证最少可用副本数
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: backend-pdb
+  namespace: hw4
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: backend
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: gateway-pdb
+  namespace: hw4
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: gateway

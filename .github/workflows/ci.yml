@@ -1,0 +1,63 @@
+# CI：代码推送后自动完成 语法检查 → 镜像构建 → 容器冒烟测试 → K8s 清单校验 → 推送镜像到 GHCR
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  OWNER: ${{ github.repository_owner }}
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Lint
+        run: |
+          pip install pyflakes
+          pyflakes src scripts
+
+      - name: Build images
+        run: |
+          docker build -f docker/backend.Dockerfile --build-arg PIP_INDEX_URL=https://pypi.org/simple -t hw4/backend:${{ github.sha }} .
+          docker build -f docker/gateway.Dockerfile --build-arg PIP_INDEX_URL=https://pypi.org/simple -t hw4/gateway:${{ github.sha }} .
+
+      - name: Smoke test with docker compose
+        run: |
+          docker tag hw4/backend:${{ github.sha }} hw4/backend:1.0
+          docker tag hw4/gateway:${{ github.sha }} hw4/gateway:1.0
+          docker compose -f docker/docker-compose.yml --env-file docker/.env up -d --no-build
+          for i in $(seq 30); do curl -sf localhost:8080/healthz && break; sleep 2; done
+          curl -sf localhost:8080/api/whoami
+          curl -sf -X POST -H 'Content-Type: application/json' -d '{"author":"ci","content":"smoke"}' localhost:8080/api/messages
+          curl -sf localhost:8080/api/messages | grep smoke
+          docker compose -f docker/docker-compose.yml --env-file docker/.env down -v
+
+      - name: Validate K8s manifests
+        run: |
+          curl -sSL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz | tar xz
+          ./kubeconform -strict -summary k8s/
+
+      - name: Push images to GHCR
+        if: github.event_name == 'push'
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u $OWNER --password-stdin
+          for s in backend gateway; do
+            img=$REGISTRY/$(echo $OWNER | tr A-Z a-z)/hw4-$s
+            docker tag hw4/$s:${{ github.sha }} $img:${{ github.sha }}
+            docker tag hw4/$s:${{ github.sha }} $img:latest
+            docker push $img:${{ github.sha }}
+            docker push $img:latest
+          done
