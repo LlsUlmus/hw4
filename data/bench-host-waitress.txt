@@ -1,0 +1,24 @@
+label      : windows-host waitress run1
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 3.10 s
+throughput : 645.2 req/s
+latency ms : avg 30.79 | p50 30.80 | p95 36.51 | p99 46.21 | max 51.85
+instances  :
+   Ulmus                                    2000
+label      : windows-host waitress run2
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 3.35 s
+throughput : 597.2 req/s
+latency ms : avg 33.27 | p50 33.07 | p95 38.72 | p99 42.93 | max 45.98
+instances  :
+   Ulmus                                    2000
+label      : windows-host waitress run3
+requests   : 2000  (concurrency 20)
+failed     : 0
+elapsed    : 3.28 s
+throughput : 609.3 req/s
+latency ms : avg 32.61 | p50 32.51 | p95 38.62 | p99 40.58 | max 44.46
+instances  :
+   Ulmus                                    2000

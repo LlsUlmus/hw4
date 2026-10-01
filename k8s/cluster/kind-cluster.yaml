@@ -1,0 +1,32 @@
+# kind 多节点集群：1 个控制平面 + 2 个工作节点，每个“节点”本身是一个 Docker 容器。
+#   kind create cluster --config k8s/cluster/kind-cluster.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: hw4
+nodes:
+  - role: control-plane
+    image: kindest/node:v1.31.0
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      - containerPort: 30080   # gateway NodePort
+        hostPort: 30080
+      - containerPort: 80      # ingress-nginx
+        hostPort: 80
+  - role: worker
+    image: kindest/node:v1.31.0
+  - role: worker
+    image: kindest/node:v1.31.0
+# 节点内 containerd 拉取镜像时走国内镜像站
+containerdConfigPatches:
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+      endpoint = ["https://docker.m.daocloud.io", "https://docker.1ms.run"]
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry.k8s.io"]
+      endpoint = ["https://k8s.m.daocloud.io"]
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."quay.io"]
+      endpoint = ["https://quay.m.daocloud.io"]

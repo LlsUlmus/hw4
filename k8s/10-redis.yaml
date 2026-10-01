@@ -15,6 +15,23 @@ spec:
     - name: redis
       port: 6379
 ---
+# 供业务访问的普通 ClusterIP Service。
+# 直接使用 redis-0.redis（Pod IP）时，Pod 重建后 IP 改变，而旧记录会被 CoreDNS 缓存最长 30s，
+# 实测 Redis 就绪后业务仍有约 19s 无法连接；ClusterIP 是稳定的虚拟 IP，只需 kube-proxy 更新后端即可。
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  namespace: hw4
+  labels:
+    app: redis
+spec:
+  selector:
+    app: redis
+  ports:
+    - name: redis
+      port: 6379
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

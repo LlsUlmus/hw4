@@ -20,6 +20,7 @@ INSTANCE = os.getenv("POD_NAME") or socket.gethostname()
 STARTED_AT = time.time()
 
 app = Flask(__name__, static_folder="static")
+app.json.ensure_ascii = False
 session = requests.Session()
 
 

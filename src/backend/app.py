@@ -28,6 +28,7 @@ NODE = os.getenv("NODE_NAME", "-")
 STARTED_AT = time.time()
 
 app = Flask(__name__)
+app.json.ensure_ascii = False  # 中文错误信息直接输出，不转义为 Unicode 码点
 
 
 class MemoryStore:
@@ -172,12 +173,31 @@ def healthz():
 
 @app.get("/readyz")
 def readyz():
-    """就绪探针：依赖的存储可用才接收流量。"""
+    """就绪探针：只反映本实例能否处理请求。
+
+    v1.0 曾在这里检查 Redis，结果 Redis 重建期间所有副本同时被判为未就绪、
+    被一起摘出 Service，连不依赖存储的接口也全部不可用（级联故障）。
+    共享依赖的状态改由 /api/deps 暴露，存储故障只影响用到存储的接口（返回 503）。
+    """
+    return jsonify({"status": "ready", "instance": INSTANCE})
+
+
+@app.get("/api/deps")
+def deps():
     try:
         store.ping()
-        return jsonify({"status": "ready", "instance": INSTANCE})
+        return jsonify({"storage": "up", "instance": INSTANCE})
     except Exception as e:  # noqa: BLE001
-        return jsonify({"status": "not-ready", "error": str(e)}), 503
+        return jsonify({"storage": "down", "error": str(e), "instance": INSTANCE}), 503
+
+
+if STORAGE_MODE != "memory":
+    import redis as _redis
+
+    @app.errorhandler(_redis.exceptions.RedisError)
+    def storage_unavailable(e):
+        """存储不可用时快速失败为 503，而不是让请求挂起或返回 500。"""
+        return jsonify({"error": "storage unavailable", "detail": str(e), "served_by": INSTANCE}), 503
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 # 启动时间测量：从发出启动指令到 /healthz 首次返回 200 的耗时（毫秒）。
 #   ./startup_time.sh docker      # 单个 backend 容器（memory 模式）
 #   ./startup_time.sh k8s         # 新建一个 backend Pod 直到 Ready
-#   ./startup_time.sh native      # 虚拟机内直接运行 Python 进程
+#   ./startup_time.sh native      # 虚拟机内直接运行 gunicorn 进程
 set -e
 MODE=${1:-docker}
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
@@ -14,12 +14,14 @@ wait_http() {
 
 case $MODE in
   native)
+    # 与容器内相同的 gunicorn 参数直接在宿主（虚拟机）上运行，VENV 为预先准备好的虚拟环境
+    VENV=${VENV:-$HOME/venv-hw4}
     t0=$(now)
-    (cd "$ROOT/src/backend" && STORAGE_MODE=memory PORT=5900 python3 app.py >/dev/null 2>&1 &)
+    (cd "$ROOT/src/backend" && STORAGE_MODE=memory setsid "$VENV/bin/gunicorn" -w 2 -b 127.0.0.1:5900 app:app >/dev/null 2>&1 &)
     wait_http http://127.0.0.1:5900/healthz
     t1=$(now)
-    pkill -f "PORT=5900" || pkill -f "src/backend.*app.py" || true
-    fuser -k 5900/tcp >/dev/null 2>&1 || true
+    pkill -f "127.0.0.1:5900" || true
+    sleep 0.5
     ;;
   docker)
     docker rm -f st-test >/dev/null 2>&1 || true

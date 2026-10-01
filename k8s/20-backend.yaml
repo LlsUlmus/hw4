@@ -29,7 +29,7 @@ spec:
               app: backend
       containers:
         - name: backend
-          image: hw4/backend:1.0
+          image: hw4/backend:1.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
@@ -38,6 +38,8 @@ spec:
             - configMapRef:
                 name: guestbook-config
           env:
+            - name: APP_VERSION         # 覆盖 ConfigMap 中的版本号，便于观察滚动更新
+              value: "1.1.0"
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
